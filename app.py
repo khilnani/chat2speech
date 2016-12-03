@@ -40,13 +40,14 @@ def background_thread():
 #        socketio.sleep(10)
 #        count += 1
 #        socketio.emit('my_response',
-#                      {'data': 'Server generated event', 'count': count},
+#                      {'data': 'Is there anybody out there?', 'count': count},
 #                      namespace=NAMESPACE)
 
 
 @app.route('/')
-def index():
-    return render_template('index.html', async_mode=socketio.async_mode)
+@app.route('/<room_id>')
+def index(room_id='Public'):
+    return render_template('index.html', async_mode=socketio.async_mode, room_id=room_id)
 
 @socketio.on('my_event', namespace=NAMESPACE)
 def test_message(message):
@@ -68,8 +69,11 @@ def join(message):
     join_room(message['room'])
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
-         {'data': 'In rooms: ' + ', '.join(rooms()),
-          'count': session['receive_count']})
+         {
+            #'data': 'Joined ' + message['room']+ '. In rooms: ' + ', '.join(rooms()),
+            'data': 'Joined room ' + message['room'],
+            'count': session['receive_count']
+        })
 
 
 @socketio.on('leave', namespace=NAMESPACE)
@@ -77,14 +81,17 @@ def leave(message):
     leave_room(message['room'])
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
-         {'data': 'In rooms: ' + ', '.join(rooms()),
-          'count': session['receive_count']})
+         {
+            #'data': 'Left ' + message['room'] + '. In rooms: ' + ', '.join(rooms()),
+            'data': 'Left room ' + message['room'],
+            'count': session['receive_count']
+        })
 
 
 @socketio.on('close_room', namespace=NAMESPACE)
 def close(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response', {'data': 'Room ' + message['room'] + ' is closing.',
+    emit('my_response', {'data': 'Room ' + message['room'] + ' is now closed.',
                          'count': session['receive_count']},
          room=message['room'])
     close_room(message['room'])

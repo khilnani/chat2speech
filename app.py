@@ -35,32 +35,31 @@ thread = None
 
 def background_thread():
     """Example of how to send server generated events to clients."""
-    count = 0
-    while True:
-        socketio.sleep(10)
-        count += 1
-        socketio.emit('my_response',
-                      {'data': 'Server generated event', 'count': count},
-                      namespace=NAMESPACE)
+#    count = 0
+#    while True:
+#        socketio.sleep(10)
+#        count += 1
+#        socketio.emit('my_response',
+#                      {'data': 'Server generated event', 'count': count},
+#                      namespace=NAMESPACE)
 
 
 @app.route('/')
 def index():
     return render_template('index.html', async_mode=socketio.async_mode)
 
-
 @socketio.on('my_event', namespace=NAMESPACE)
 def test_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']})
+         {'data': message['data'], 'count': session['receive_count'], 'speak': True})
 
 
 @socketio.on('my_broadcast_event', namespace=NAMESPACE)
 def test_broadcast_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']},
+         {'data': message['data'], 'count': session['receive_count'], 'speak': True},
          broadcast=True)
 
 
@@ -95,7 +94,7 @@ def close(message):
 def send_room_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']},
+         {'data': message['data'], 'count': session['receive_count'], 'speak': True},
          room=message['room'])
 
 
@@ -117,7 +116,7 @@ def test_connect():
     global thread
     if thread is None:
         thread = socketio.start_background_task(target=background_thread)
-    emit('my_response', {'data': 'Connected', 'count': 0})
+    emit('my_response', {'data': 'Connected from server!', 'count': 0})
 
 
 @socketio.on('disconnect', namespace=NAMESPACE)

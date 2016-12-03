@@ -19,7 +19,7 @@ services:
             - "15672:15672"
     chat2speech-app:
         container_name: chat2speech-app
-        image: khilnani/pythonlite:0.2
+        image: khilnani/pythonlite:latest
         depends_on:
             - chat2speech-rabbit
         restart: always

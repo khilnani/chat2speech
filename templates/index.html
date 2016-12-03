@@ -72,7 +72,7 @@
                 })
 
             } else {
-                $('#modal1').openModal();
+                alert('Your browser does not support speech synthesis. Please use Google Chrome.')
             }
 
 
@@ -113,8 +113,8 @@
                 var main_msg = msgs.join('|')
                 $('#log').prepend(
                     '<br>' + 
-                    '<b>' + $('<div/>').text(front_msg).html() + '</b>' +
-                    (main_msg ? '<br>' + $('<div/>').text(main_msg).html() : '')
+                    $('<div/>').text(front_msg).html() +
+                    (main_msg ? '<br>' + '<b>' + $('<div/>').text(main_msg).html()  + '</b>': '')
                 );
                 if( msg.speak == true) {
                     talk(main_msg)
@@ -240,12 +240,14 @@
 <body>
     <div class="container">
 
-        <div class="row">
+        <div class="col s12">
 
 
-            <div class="col l6">
-                <div class="row col s12 horizontal">
-                    <h5 class="col s9">Room: {{ room_id }}</h5>
+            <div class="row">
+                <h5 class="col s9">Room: {{ room_id }}</h5>
+
+                <div class="row horizontal">
+                    
                     <a href="#" id="closebtn" class="btn-floating btn">
                         <i class="material-icons">settings_power</i>
                     </a>
@@ -255,6 +257,7 @@
                 </div>
 
                 <div class="col s12">
+
                     <form id="username" method="POST" action='#'>
                         <input type="text" name="username_data" id="username_data" placeholder="Username" class="input-field col s8"/>
                         <a href="#" id="usernamebtn" class="waves-effect waves-light btn">Save</a>
@@ -265,15 +268,58 @@
                     </form>
                 </div>
 
+                <div class="col s12">
+
                 <h5>Messages</h5>
 
                 <div id="log" class="row"></div>
+            </div>
 
             </div>
 
-            <div class="col l6" >
+            <div class="col s12" >
 
 
+                <h5>Voice Settings</h5>
+
+                <form>
+                    <div class="row">
+                         <label>Choose voice</label>
+                         <select id="voices"></select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s4">
+                            <label>Rate</label>
+                            <p class="range-field">
+                                <input type="range" id="rate" min="0.1" max="10" step="0.1" value="1" />
+                            </p>
+                        </div>
+                        <div class="col s4">
+                            <label>Pitch</label>
+                            <p class="range-field">
+                                <input type="range" id="pitch" min="0" max="2" value="1" step="0.1" />
+                            </p>
+                        </div>
+                        <div class="col s4">
+                            <label>Volume</label>
+                            <p class="range-field">
+                                <input type="range" id="volume" min="0" max="1" value="1" step="0.1"/>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="text" name="message" id="message" placeholder="Message" class="input-field col s8"/>
+                        <a href="#" id="speak" class="waves-effect waves-light btn">Test</a>
+                    </div>                    
+                </form> 
+
+                <p>Async mode: <b>{{ async_mode }}</b> Latency: <b><span id="ping-pong"></span>ms</b></p>
+
+            </div>
+        </div>
+
+    </div>
 
 <!--
 
@@ -323,55 +369,6 @@
                     <a href="#" id="disconnectbtn" class="waves-effect waves-light btn">Disconnect</a>
                 </form>
 //-->
-                <h5>Voice Settings</h5>
-
-                <form>
-                    <div class="row">
-                         <label>Choose voice</label>
-                         <select id="voices"></select>
-                    </div>
-
-                    <div class="row">
-                        <div class="col s4">
-                            <label>Rate</label>
-                            <p class="range-field">
-                                <input type="range" id="rate" min="0.1" max="10" step="0.1" value="1" />
-                            </p>
-                        </div>
-                        <div class="col s4">
-                            <label>Pitch</label>
-                            <p class="range-field">
-                                <input type="range" id="pitch" min="0" max="2" value="1" step="0.1" />
-                            </p>
-                        </div>
-                        <div class="col s4">
-                            <label>Volume</label>
-                            <p class="range-field">
-                                <input type="range" id="volume" min="0" max="1" value="1" step="0.1"/>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <input type="text" name="message" id="message" placeholder="Message" class="input-field col s8"/>
-                        <a href="#" id="speak" class="waves-effect waves-light btn">Test</a>
-                    </div>                    
-                </form> 
-
-                <p>Async mode: <b>{{ async_mode }}</b> Latency: <b><span id="ping-pong"></span>ms</b></p>
-
-            </div>
-        </div>
-
-    </div>
-
-    <div id="modal1" class="modal">
-      <h4>Speech Synthesis not supported</h4>
-      <p>Your browser does not support speech synthesis.</p>
-      <p>We recommend you use Google Chrome.</p>
-      <div class="action-bar">
-        <a href="#" class="waves-effect waves-green btn-flat modal-action modal-close">Close</a>
-      </div>
-    </div>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 

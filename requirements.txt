@@ -1,0 +1,13 @@
+Flask==0.11.1
+flask-socketio==2.7.2
+flask-cors==3.0.2
+flask-debugtoolbar==0.10.0
+flask-restful==0.3.5
+flask-admin==1.4.2
+Jinja2==2.8
+kombu==4.0.0
+six==1.10.0
+gevent==1.1.2
+gevent-socketio==0.3.6
+gevent-websocket==0.9.5
+gunicorn==19.6.0

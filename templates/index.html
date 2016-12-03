@@ -1,0 +1,239 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Chat2Speech</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        $(function(){
+
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // Voice
+            ////////////////////////////////////////////////////////////////////////////////
+
+            function talk(text) {
+                var msg = new SpeechSynthesisUtterance();
+                var voices = window.speechSynthesis.getVoices();
+                msg.voice = voices[$('#voices').val()];
+                msg.rate = parseFloat($('#rate').val());
+                msg.pitch = $('#pitch').val();
+                msg.volume = parseFloat($('#volume').val());
+                msg.text = text;
+
+                msg.onend = function(e) {
+                    console.log('Finished in ' + event.elapsedTime + ' seconds.');
+                };
+
+                console.log(speechSynthesis);
+
+                speechSynthesis.speak(msg);
+            }
+
+
+            if ('speechSynthesis' in window) {
+                speechSynthesis.onvoiceschanged = function() {
+                    var $voicelist = $('#voices');
+
+                    if($voicelist.find('option').length == 0) {
+                        speechSynthesis.getVoices().forEach(function(voice, index) {
+                            console.log(voice);
+                            var $option = $('<option>')
+                                .val(index)
+                                .html(voice.name + (voice.default ? ' (default)' :''));
+                            $voicelist.append($option);
+                        });
+                        $voicelist.material_select();
+                    }
+                }
+
+                $('#speak').click(function(){
+                    var text = $('#message').val();
+                    talk(text)
+                })
+
+            } else {
+                $('#modal1').openModal();
+            }
+
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // Socket IO
+            ////////////////////////////////////////////////////////////////////////////////
+
+            // Use a "/test" namespace.
+            // An application can open a connection on multiple namespaces, and
+            // Socket.IO will multiplex all those connections on a single
+            // physical channel. If you don't care about multiple channels, you
+            // can set the namespace to an empty string.
+            namespace = '/test';
+            // Connect to the Socket.IO server.
+            // The connection URL has the following format:
+            //     http[s]://<domain>:<port>[/<namespace>]
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+            // Event handler for new connections.
+            // The callback function is invoked when a connection with the
+            // server is established.
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
+            // Event handler for server sent data.
+            // The callback function is invoked whenever the server emits data
+            // to the client. The data is then displayed in the "Received"
+            // section of the page.
+            socket.on('my_response', function(msg) {
+                $('#log').prepend('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+                talk(msg.data)
+            });
+            // Interval function that tests message latency by sending a "ping"
+            // message. The server then responds with a "pong" message and the
+            // round trip time is measured.
+            var ping_pong_times = [];
+            var start_time;
+            window.setInterval(function() {
+                start_time = (new Date).getTime();
+                socket.emit('my_ping');
+            }, 1000);
+            // Handler for the "pong" message. When the pong is received, the
+            // time from the ping is stored, and the average of the last 30
+            // samples is average and displayed.
+            socket.on('my_pong', function() {
+                var latency = (new Date).getTime() - start_time;
+                ping_pong_times.push(latency);
+                ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
+                var sum = 0;
+                for (var i = 0; i < ping_pong_times.length; i++)
+                    sum += ping_pong_times[i];
+                $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
+            });
+            // Handlers for the different forms in the page.
+            // These accept data from the user and send it to the server in a
+            // variety of ways
+
+            $('#emitbtn').click(function(){
+                socket.emit('my_event', {data: $('#emit_data').val()});
+            })
+            $('#broadcastbtn').click(function(){
+                socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
+            })
+            $('#joinbtn').click(function(event) {
+                socket.emit('join', {room: $('#join_room').val()});
+            });
+            $('#leavebtn').click(function(event) {
+                socket.emit('leave', {room: $('#leave_room').val()});
+            });
+            $('#send_roombtn').click(function(event) {
+                socket.emit('my_room_event', {room: $('#room_name').val(), data: $('#room_data').val()});
+            });
+            $('#closebtn').click(function(event) {
+                socket.emit('close_room', {room: $('#close_room').val()});
+            });
+            $('#disconnectbtn').click(function(event) {
+                socket.emit('disconnect_request');
+            });
+
+        });
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h3>Chat2Speech</h3>
+
+        <div class="row">
+            <div class="col s8" >
+
+                <h5>Send Message</h5>
+
+                <form id="emit" method="POST" action='#' class="row">
+                    <input type="text" name="emit_data" id="emit_data" placeholder="Message" class="col s7">
+                    <a href="#" id="emitbtn" class="waves-effect waves-light btn">Echo</a>
+                </form>
+                <form id="broadcast" method="POST" action='#' class="row">
+                    <input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message" class="col s7">
+                    <a href="#" id="broadcastbtn" class="waves-effect waves-light btn">Broadcast</a>
+                </form>
+                <form id="join" method="POST" action='#' class="row">
+                    <input type="text" name="join_room" id="join_room" placeholder="Room Name" class="col s7">
+                    <a href="#" id="joinbtn" class="waves-effect waves-light btn">Join Room</a>
+                </form>
+                <form id="leave" method="POST" action='#' class="row">
+                    <input type="text" name="leave_room" id="leave_room" placeholder="Room Name" class="col s7">
+                    <a href="#" id="leavebtn" class="waves-effect waves-light btn">Leave Room</a>
+                </form>
+                <form id="send_room" method="POST" action='#' class="row">
+                    <input type="text" name="room_name" id="room_name" placeholder="Room Name" class="col s3">
+                    <input type="text" name="room_data" id="room_data" placeholder="Message" class="col s4">
+                    <a href="#" id="send_roombtn" class="waves-effect waves-light btn">Send</a>
+                </form>
+                <form id="close" method="POST" action="#" class="row">
+                    <input type="text" name="close_room" id="close_room" placeholder="Room Name" class="col s7">
+                    <a href="#" id="closebtn" class="waves-effect waves-light btn">Close Room</a>
+                </form>
+                <form id="disconnect" method="POST" action="#" class="row">
+                    <a href="#" id="disconnectbtn" class="waves-effect waves-light btn">Disconnect</a>
+                </form>
+
+                <h5>Voice Settings</h5>
+
+                <form>
+                    <div class="row">
+                         <label>Choose voice</label>
+                         <select id="voices"></select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s4">
+                            <label>Rate</label>
+                            <p class="range-field">
+                                <input type="range" id="rate" min="0.1" max="10" step="0.1" value="1" />
+                            </p>
+                        </div>
+                        <div class="col s4">
+                            <label>Pitch</label>
+                            <p class="range-field">
+                                <input type="range" id="pitch" min="0" max="2" value="1" step="0.1" />
+                            </p>
+                        </div>
+                        <div class="col s4">
+                            <label>Volume</label>
+                            <p class="range-field">
+                                <input type="range" id="volume" min="0" max="1" value="1" step="0.1"/>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="text" name="message" id="message" placeholder="Message" class="input-field col s8"/>
+                        <a href="#" id="speak" class="waves-effect waves-light btn">Speak</a>
+                        </div>                    
+                </form> 
+
+            </div>
+            <div class="col s4">
+                <h5>Messages</h5>
+
+                <div id="log"></div>
+
+                <h5>System</h5>
+                    <p>Async mode is: <b>{{ async_mode }}</b></p>
+                    <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="modal1" class="modal">
+      <h4>Speech Synthesis not supported</h4>
+      <p>Your browser does not support speech synthesis.</p>
+      <p>We recommend you use Google Chrome.</p>
+      <div class="action-bar">
+        <a href="#" class="waves-effect waves-green btn-flat modal-action modal-close">Close</a>
+      </div>
+    </div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+</body>
+</html>

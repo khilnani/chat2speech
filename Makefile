@@ -6,7 +6,7 @@ clean:
 init:
 	virtualenv -p `which python2.7` $(WORKON_HOME)/chat2speech
 	$(WORKON_HOME)/chat2speech/bin/pip install -U pip wheel
-	$(WORKON_HOME)/chat2speech/bin/pip install -Ur requirements/development.txt
+	$(WORKON_HOME)/chat2speech/bin/pip install -Ur requirements.txt
 	$(WORKON_HOME)/chat2speech/bin/pip freeze
 	@echo ""
 	@echo "workon chat2speech"
@@ -18,9 +18,10 @@ reset:
 	rm -rf $(WORKON_HOME)/chat2speech
 
 r:
-	$(WORKON_HOME)/chat2speech/bin/pip install -U -r requirements/development.txt
+	pip install -U -r requirements.txt
 
 run:
 	# ENV=development, production
 	# PORT=8080
-	python app.py
+	FLASK_APP=app.py FLASK_DEBUG=1 flask run --host=0.0.0.0 --port=$(PORT)
+	#FLASK_DEBUG=1 python app.py --host=0.0.0.0 --port=$(PORT)

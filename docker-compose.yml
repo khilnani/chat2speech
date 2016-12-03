@@ -25,7 +25,7 @@ services:
         restart: always
         environment:
             - ENV=production
-            - PORT=8080
+            - PORT=8888
             - RABBITMQ_USER=guest
             - RABBITMQ_PASSWORD=guest
             - RABBITMQ_HOST=chat2speech-rabbit
@@ -33,8 +33,8 @@ services:
         volumes:
             - .:/opt/chat2speech
         expose:
-            - 8080
+            - 8888
             - 5000
         ports:
-            - "8080:8080"
+            - "8888:8888"
         entrypoint: /bin/sh /opt/chat2speech/env/entrypoint-app.sh

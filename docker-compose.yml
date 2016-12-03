@@ -1,0 +1,15 @@
+version: '2'
+services:
+    chat2speech-app:
+        container_name: chat2speech-app
+        image: khilnani/pythonlite:0.2
+        restart: always
+        environment:
+            - ENV=production
+            - PORT=8080
+        volumes:
+            - .:/opt/chat2speech
+        ports:
+            - "8080:8080"
+            - "8090:8090"
+        entrypoint: /bin/sh /opt/chat2speech/env/entrypoint-app.sh

@@ -25,3 +25,12 @@ run:
 	# PORT=8080
 	FLASK_APP=app.py FLASK_DEBUG=1 flask run --host=0.0.0.0 --port=$(PORT)
 	#FLASK_DEBUG=1 python app.py --host=0.0.0.0 --port=$(PORT)
+
+start:
+	# ENV=development, production
+	# PORT=8080
+	# uwsgi --ini uwsgi.ini:production -H $(WORKON_HOME)/chat2speech
+	uwsgi --ini uwsgi.ini:production
+
+stop:
+	uwsgi --stop uwsgi.pid

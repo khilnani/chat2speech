@@ -9,4 +9,6 @@ kombu==4.0.0
 six==1.10.0
 gevent==1.1.2
 gevent-websocket==0.9.5
+python-socketio==1.6.1
 gunicorn==19.6.0
+uwsgi==2.0.14

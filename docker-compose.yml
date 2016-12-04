@@ -1,7 +1,11 @@
 version: '2'
+networks:
+    default:
+        external:
+            name: local
 services:
-    chat2speech-rabbit:
-        container_name: chat2speech-rabbit
+    rabbit:
+        container_name: rabbit
         image: rabbitmq:3.6-management
         restart: always
         environment:
@@ -17,11 +21,11 @@ services:
         ports:
             - "5672:5672"
             - "15672:15672"
-    chat2speech-app:
+    chat2speech:
         container_name: chat2speech-app
         image: khilnani/pythonlite:latest
         depends_on:
-            - chat2speech-rabbit
+            - rabbit
         restart: always
         environment:
             - ENV=production

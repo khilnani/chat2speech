@@ -1,13 +1,19 @@
-# chat2speech
+## chat2speech
 
-> Based on the below articles and reference code. Thanks!
+A chat app that reads aloud chat messages so you do not need to constantly read the chat message log.
 
-Usage
+Built using the Python Flask and Flask Socket IO libraries, Rabbit MQ and Google's Materialize CSS
+
+Included links to referenced articles and documentation below. Thanks!
+
+## Usage
 
 - Run `docker-compose up`
 - Navigate to:
   - http://127.0.0.1:8888/ - Public room
   - http://127.0.0.1:8888/ANY_ROOM_NAME - A room with the name ANY_ROOM_NAM
+
+## Links
 
 Text 2 Speech
 

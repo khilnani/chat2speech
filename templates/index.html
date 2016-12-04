@@ -26,7 +26,6 @@
               }
             });
 
-
             ////////////////////////////////////////////////////////////////////////////////
             // Voice
             ////////////////////////////////////////////////////////////////////////////////
@@ -43,9 +42,7 @@
                 msg.onend = function(e) {
                     console.log('Finished in ' + event.elapsedTime + ' seconds.');
                 };
-
                 //console.log(speechSynthesis);
-
                 speechSynthesis.speak(msg);
             }
 
@@ -144,9 +141,9 @@
                 $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
             });
 
-            // Handlers for the different forms in the page.
-            // These accept data from the user and send it to the server in a
-            // variety of ways
+            ////////////////////////////////////////////////////////////////////////////////
+            // Handlers
+            ////////////////////////////////////////////////////////////////////////////////
 
             init_page = function () {
                 $('#username_data').focus()
@@ -171,20 +168,6 @@
             $('#usernamebtn').click(username_func)
             $('#username').submit(username_func)
 
-            emit_func = function(){
-                socket.emit('my_event', {data: username + ' says ' + $('#emit_data').val()});
-                return false
-            }
-            $('#emitbtn').click(emit_func)
-            $('#emit').submit(emit_func)
-
-
-            broadcast_func = function(){
-                socket.emit('my_broadcast_event', {data: username + ' says ' + $('#broadcast_data').val()});
-                return false
-            }
-            $('#broadcastbtn').click(broadcast_func)
-            $('#broadcast').submit(broadcast_func)
 
             join_func = function(event) {
                 socket.emit('join', {room: $('#join_room').val()});
@@ -193,17 +176,6 @@
             $('#joinbtn').click(join_func);
             $('#join').submit(join_func);
 
-
-            leav_func = function(event) {
-                //var room_id = $('#leave_room').val()
-                var room_id = '{{ room_id }}'
-                socket.emit('leave', {room: room_id});
-                // reset
-                init_page();
-                return false
-            }
-            $('#leavebtn').click(leav_func);
-            $('#leave').submit(leav_func);
 
             send_room_func = function(event) {
                 //var room_id = $('#room_name').val()
@@ -220,6 +192,17 @@
             $('#send_roombtn').click(send_room_func);
             $('#send_room').submit(send_room_func);
 
+            leav_func = function(event) {
+                //var room_id = $('#leave_room').val()
+                var room_id = '{{ room_id }}'
+                socket.emit('leave', {room: room_id});
+                // reset
+                init_page();
+                return false
+            }
+            $('#leavebtn').click(leav_func);
+            $('#leave').submit(leav_func);
+
             close_func = function(event) {
                 //var room_id = $('#close_room').val()
                 var room_id = '{{ room_id }}'
@@ -233,6 +216,24 @@
             $('#disconnectbtn').click(function(event) {
                 socket.emit('disconnect_request');
             });
+
+/*
+            emit_func = function(){
+                socket.emit('my_event', {data: username + ' says ' + $('#emit_data').val()});
+                return false
+            }
+            $('#emitbtn').click(emit_func)
+            $('#emit').submit(emit_func)
+
+
+            broadcast_func = function(){
+                socket.emit('my_broadcast_event', {data: username + ' says ' + $('#broadcast_data').val()});
+                return false
+            }
+            $('#broadcastbtn').click(broadcast_func)
+            $('#broadcast').submit(broadcast_func)
+
+*/
 
             init_page();
 

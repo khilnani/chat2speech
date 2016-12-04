@@ -5,7 +5,7 @@ networks:
             name: local
 services:
     rabbit:
-        container_name: rabbit
+        container_name: chat2speech-rabbit
         image: rabbitmq:3.6-management
         restart: always
         environment:
@@ -17,10 +17,8 @@ services:
         expose:
             - 5672
             - 15672
-            - 12397
         ports:
-            - "5672:5672"
-            - "15672:15672"
+            - "15673:15672"
     chat2speech:
         container_name: chat2speech-app
         image: khilnani/pythonlite:latest
@@ -32,7 +30,7 @@ services:
             - PORT=8888
             - RABBITMQ_USER=guest
             - RABBITMQ_PASSWORD=guest
-            - RABBITMQ_HOST=rabbit
+            - RABBITMQ_HOST=chat2speech-rabbit
             - RABBITMQ_VHOST=/
         volumes:
             - .:/opt/chat2speech

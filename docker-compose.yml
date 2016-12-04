@@ -13,11 +13,9 @@ services:
         expose:
             - 5672
             - 15672
-        ports:
-            - "15673:15672"
     chat2speech:
         container_name: chat2speech-app
-        image: khilnani/pythonlite:latest
+        image: khilnani/pythonlite:0.4
         depends_on:
             - rabbit
         restart: always
@@ -32,7 +30,6 @@ services:
             - .:/opt/chat2speech
         expose:
             - 8888
-            - 5000
         ports:
             - "8888:8888"
         entrypoint: /bin/sh /opt/chat2speech/env/entrypoint-app.sh

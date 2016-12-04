@@ -6,7 +6,7 @@ Built using the Python Flask and Flask Socket IO libraries, Rabbit MQ and Google
 
 Included links to referenced articles and documentation below. Thanks!
 
-![Demo Anim](https://github.com/khilnani/chat2speech/blob/master/images/demo.gif?raw=true "Demo Anim")
+![Demo Anim](https://github.com/khilnani/chat2speech/blob/master/images/demo-sm.gif?raw=true "Demo Anim")
 
 ## Usage
 

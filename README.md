@@ -1,8 +1,8 @@
 ## chat2speech
 
-A chat app that reads aloud chat messages so you do not need to constantly read the chat message log.
+A prototype of a chat app that reads aloud chat messages so you do not need to constantly read the chat message log. Prototype = rushed code.
 
-Built using the Python Flask and Flask Socket IO libraries, Rabbit MQ and Google's Materialize CSS
+Built using the Python Flask and Flask Socket IO libraries, Rabbit MQ, Google's Materialize CSS and some Docker. 
 
 Included links to referenced articles and documentation below. Thanks!
 

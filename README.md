@@ -2,6 +2,13 @@
 
 > Based on the below articles and reference code. Thanks!
 
+Usage
+
+- Run `docker-compose up`
+- Navigate to:
+  - http://127.0.0.1:8888/ - Public room
+  - http://127.0.0.1:8888/ANY_ROOM_NAME - A room with the name ANY_ROOM_NAM
+
 Text 2 Speech
 
 - https://developers.google.com/web/updates/2014/01/Web-apps-that-talk-Introduction-to-the-Speech-Synthesis-API

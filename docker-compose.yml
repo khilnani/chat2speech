@@ -32,7 +32,7 @@ services:
             - PORT=8888
             - RABBITMQ_USER=guest
             - RABBITMQ_PASSWORD=guest
-            - RABBITMQ_HOST=chat2speech-rabbit
+            - RABBITMQ_HOST=rabbit
             - RABBITMQ_VHOST=/
         volumes:
             - .:/opt/chat2speech

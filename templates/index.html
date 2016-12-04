@@ -213,6 +213,8 @@
 
                 var msg = date_msg + ' | ' + username + ' says ' + user_msg
                 socket.emit('my_room_event', {room: room_id, data: msg,});
+
+                $('#room_data').val('')
                 return false
             }
             $('#send_roombtn').click(send_room_func);
